@@ -1,0 +1,134 @@
+==================================================
+File: olist_customers_dataset.csv
+Shape: (99441, 5)
+Columns: ['customer_id', 'customer_unique_id', 'customer_zip_code_prefix', 'customer_city', 'customer_state']
+Null counts:
+Series([], dtype: int64)
+Sample:
+                        customer_id  ... customer_state
+0  06b8999e2fba1a1fbc88172c00ba8bc7  ...             SP
+1  18955e83d337fd6b2def6b18a428ac77  ...             SP
+
+[2 rows x 5 columns]
+
+==================================================
+File: olist_geolocation_dataset.csv
+Shape: (1000163, 5)
+Columns: ['geolocation_zip_code_prefix', 'geolocation_lat', 'geolocation_lng', 'geolocation_city', 'geolocation_state']
+Null counts:
+Series([], dtype: int64)
+Sample:
+   geolocation_zip_code_prefix  ...  geolocation_state
+0                         1037  ...                 SP
+1                         1046  ...                 SP
+
+[2 rows x 5 columns]
+
+==================================================
+File: olist_orders_dataset.csv
+Shape: (99441, 8)
+Columns: ['order_id', 'customer_id', 'order_status', 'order_purchase_timestamp', 'order_approved_at', 'order_delivered_carrier_date', 'order_delivered_customer_date', 'order_estimated_delivery_date']
+Null counts:
+order_approved_at                 160
+order_delivered_carrier_date     1783
+order_delivered_customer_date    2965
+dtype: int64
+Sample:
+                           order_id  ... order_estimated_delivery_date
+0  e481f51cbdc54678b7cc49136f2d6af7  ...           2017-10-18 00:00:00
+1  53cdb2fc8bc7dce0b6741e2150273451  ...           2018-08-13 00:00:00
+
+[2 rows x 8 columns]
+
+==================================================
+File: olist_order_items_dataset.csv
+Shape: (112650, 7)
+Columns: ['order_id', 'order_item_id', 'product_id', 'seller_id', 'shipping_limit_date', 'price', 'freight_value']
+Null counts:
+Series([], dtype: int64)
+Sample:
+                           order_id  order_item_id  ...  price freight_value
+0  00010242fe8c5a6d1ba2dd792cb16214              1  ...   58.9         13.29
+1  00018f77f2f0320c557190d7a144bdd3              1  ...  239.9         19.93
+
+[2 rows x 7 columns]
+
+==================================================
+File: olist_order_payments_dataset.csv
+Shape: (103886, 5)
+Columns: ['order_id', 'payment_sequential', 'payment_type', 'payment_installments', 'payment_value']
+Null counts:
+Series([], dtype: int64)
+Sample:
+                           order_id  ...  payment_value
+0  b81ef226f3fe1789b1e8b2acac839d17  ...          99.33
+1  a9810da82917af2d9aefd1278f1dcfa0  ...          24.39
+
+[2 rows x 5 columns]
+
+==================================================
+File: olist_order_reviews_dataset.csv
+Shape: (99224, 7)
+Columns: ['review_id', 'order_id', 'review_score', 'review_comment_title', 'review_comment_message', 'review_creation_date', 'review_answer_timestamp']
+Null counts:
+review_comment_title      87656
+review_comment_message    58247
+dtype: int64
+Sample:
+                          review_id  ... review_answer_timestamp
+0  7bc2406110b926393aa56f80a40eba40  ...     2018-01-18 21:46:59
+1  80e641a11e56f04c1ad469d5645fdfde  ...     2018-03-11 03:05:13
+
+[2 rows x 7 columns]
+
+==================================================
+File: olist_products_dataset.csv
+Shape: (32951, 9)
+Columns: ['product_id', 'product_category_name', 'product_name_lenght', 'product_description_lenght', 'product_photos_qty', 'product_weight_g', 'product_length_cm', 'product_height_cm', 'product_width_cm']
+Null counts:
+product_category_name         610
+product_name_lenght           610
+product_description_lenght    610
+product_photos_qty            610
+product_weight_g                2
+product_length_cm               2
+product_height_cm               2
+product_width_cm                2
+dtype: int64
+Sample:
+                         product_id  ... product_width_cm
+0  1e9e8ef04dbcff4541ed26657ea517e5  ...             14.0
+1  3aa071139cb16b67ca9e5dea641aaa2f  ...             20.0
+
+[2 rows x 9 columns]
+
+==================================================
+File: olist_sellers_dataset.csv
+Shape: (3095, 4)
+Columns: ['seller_id', 'seller_zip_code_prefix', 'seller_city', 'seller_state']
+Null counts:
+Series([], dtype: int64)
+Sample:
+                          seller_id  ...  seller_state
+0  3442f8959a84dea7ee197c632cb2df15  ...            SP
+1  d1b65fc7debc3361ea86b5f14c68d2e2  ...            SP
+
+[2 rows x 4 columns]
+
+==================================================
+File: product_category_name_translation.csv
+Shape: (71, 2)
+Columns: ['product_category_name', 'product_category_name_english']
+Null counts:
+Series([], dtype: int64)
+Sample:
+    product_category_name product_category_name_english
+0            beleza_saude                 health_beauty
+1  informatica_acessorios         computers_accessories
+
+
+Bảng nào là bảng trung tâm (có nhiều foreign key nhất)?
+Cột nào có null nhiều nhất và tại sao?
+Kiểu dữ liệu nào bị đọc sai (ví dụ date bị đọc thành string)?
+Bảng nào có thể có duplicate rows?
+Granularity của từng bảng là gì (1 row = 1 cái gì)?

@@ -1,0 +1,8 @@
+CREATE SCHEMA IF NOT EXISTS raw;
+CREATE SCHEMA IF NOT EXISTS staging;
+CREATE SCHEMA IF NOT EXISTS marts;
+
+CREATE ROLE dbt_user WITH LOGIN PASSWORD 'dbt_password';
+GRANT USAGE ON SCHEMA raw, staging, marts TO dbt_user;
+GRANT CREATE ON SCHEMA staging, marts TO dbt_user;
+GRANT SELECT ON ALL TABLES IN SCHEMA raw TO dbt_user;
