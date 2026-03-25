@@ -42,7 +42,6 @@ PostgreSQL · schema: raw          ← dữ liệu gốc, không transform
 E-commerce-Analytics-Pipeline/
 ├── docker-compose.yml
 ├── init_schemas.sql
-├── .env                        # Không commit — xem .env.sample
 ├── .env.sample
 ├── .gitignore
 ├── requirements.txt
