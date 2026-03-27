@@ -198,6 +198,22 @@ Star schema theo Kimball methodology:
 
 ## Lessons learned
 
+Tổng kết Session 2 — Data Modeling với dbtNhững gì đã làm được1. Kiến trúc 3-layer hoàn chỉnhraw schema          staging schema           marts schema
+──────────          ──────────────           ────────────
+orders         →    stg_orders          →    fct_orders
+order_items    →    stg_order_items     →    dim_customers
+customers      →    stg_customers       →    dim_products
+products       →    stg_products        →    dim_sellers
+sellers        →    stg_sellers
+order_payments →    stg_order_payments2. Staging layer (6 views)ModelNhiệm vụ chínhstg_ordersCast 5 timestamp columnsstg_order_itemsCast price, freight thành numericstg_customersRename bỏ prefix customer_stg_productsCast dimensions, qty thành đúng typestg_sellersRename bỏ prefix seller_stg_order_paymentsCast payment_value, installments3. Marts layer (4 tables — Star Schema)fct_orders là fact table trung tâm, tính sẵn các metrics:
+
+item_count, total_price, total_freight_value
+total_order_value, delivery_days
+3 dimension tables: dim_customers, dim_products, dim_sellers4. dbt Tests — 16 tests passLoại testModels được testuniqueorder_id, customer_id, product_idnot_nullTất cả primary keys + foreign keys quan trọngConcepts quan trọng đã họcMaterialization: Staging dùng view (không tốn storage), Marts dùng table (performance tốt hơn cho query phức tạp).{{ ref() }} — dbt tự động hiểu dependency graph và chạy đúng thứ tự. Không cần hardcode schema name.{{ source() }} — khai báo raw tables trong sources.yml, dbt track lineage từ raw → staging → marts.Custom macro generate_schema_name — override behavior mặc định của dbt để schema name không bị ghép đôi.Bài học thực tế
+dbt init wizard không hoạt động tốt trong PowerShell → tạo profiles.yml thủ công
+dbt ghép schema mặc định + custom schema → cần custom macro để override
+Xóa example models ngay sau khi init, không để lẫn vào project thật
+
 - File `.env` phải là UTF-8 **không có BOM** — kiểm tra ở góc dưới phải PyCharm
 - Docker Desktop phải mở trước khi dùng `docker-compose`
 - Dùng `Path(__file__).parent.parent` thay vì hardcode path — hoạt động đúng từ mọi thư mục
