@@ -1,109 +1,84 @@
-# Analysis Results — Olist E-commerce
+# Analysis Results — Olist E-commerce (Brazil)
 
-Tổng hợp insights từ phân tích ~100,000 đơn hàng thương mại điện tử Olist (Brazil) giai đoạn 2016–2018.
+Tổng hợp insights chiến lược từ phân tích ~100,000 đơn hàng trên nền tảng Olist giai đoạn 2016–2018.
 
 ---
 
 ## 1. RFM Customer Segmentation
-
 ![RFM Segments](notebooks/results/01_rfm_segments.png)
 
 ### Phân khúc khách hàng
-
 | Segment | Đặc điểm | Chiến lược đề xuất |
 |---|---|---|
-| **Champions** | Mua gần đây, thường xuyên, giá trị cao | Reward, upsell, VIP program |
-| **Loyal** | Mua đều đặn, gắn bó lâu dài | Loyalty program, early access |
-| **New** | Mới mua lần đầu | Onboarding email, nurture campaign |
-| **Potential** | Có tiềm năng nhưng chưa convert | Targeted promotions |
-| **At Risk** | Từng mua nhiều nhưng đang rời đi | Win-back campaigns |
-| **Lost** | Không mua trong thời gian dài | Re-engagement hoặc bỏ qua |
+| **Champions** | Mua gần đây, tần suất cao, chi tiêu lớn | Đặc quyền VIP, tri ân khách hàng thân thiết |
+| **Loyal** | Khách hàng trung thành, mua đều đặn | Chương trình tích điểm, ưu tiên trải nghiệm |
+| **New** | Khách hàng mới phát sinh giao dịch | Quy trình Onboarding, coupon cho đơn thứ 2 |
+| **Potential** | Khách hàng tiềm năng, cần thúc đẩy | Gợi ý sản phẩm liên quan (Cross-sell) |
+| **At Risk** | Khách hàng cũ có dấu hiệu rời bỏ | Win-back campaign, giảm giá sâu để kéo lại |
+| **Lost** | Đã ngừng tương tác rất lâu | Tối ưu chi phí, chỉ re-marketing vào dịp lớn |
 
 ### Key Insights
-- Phần lớn khách hàng thuộc nhóm **New** — Olist đang tăng trưởng mạnh về acquisition nhưng yếu về retention
-- Nhóm **Champions** tuy ít về số lượng nhưng đóng góp revenue không cân xứng — cần được chăm sóc đặc biệt
-- Tỷ lệ **Lost** cao → retention là vấn đề ưu tiên số 1
+* **Acquisition vs Retention:** Phần lớn khách hàng dừng lại ở nhóm **New** hoặc **Potential**. Olist đang làm rất tốt việc thu hút khách hàng mới nhưng cực kỳ yếu trong việc giữ chân họ.
+* **Sức mạnh nhóm tinh hoa:** Nhóm **Champions** chiếm tỷ trọng nhỏ về số lượng nhưng đóng góp giá trị đơn hàng trung bình (AOV) cao nhất.
+* **Cảnh báo:** Tỷ lệ khách hàng chuyển dịch sang nhóm **At Risk** và **Lost** tăng nhanh theo thời gian.
 
 ---
 
 ## 2. Delivery Performance by State
-
 ![Delivery by State](notebooks/results/02_delivery_by_state.png)
 
 ### Key Insights
-- Các bang vùng **Bắc và Đông Bắc** (RR, AP, AM) có delivery time dài nhất — do địa lý xa xôi và hạ tầng logistics kém
-- Khu vực **São Paulo (SP)** và các bang miền Nam có delivery time tốt nhất — tập trung nhiều seller và warehouse
-- Late delivery rate tương quan rõ với khoảng cách địa lý: bang xa = trễ nhiều hơn
+* **Phân hóa địa lý:** Các bang vùng **Bắc và Đông Bắc** (RR, AP, AM) có thời gian giao hàng dài nhất (trung bình >20 ngày) do hạ tầng logistics gặp trở ngại địa lý.
+* **Trung tâm Logistics:** Khu vực **São Paulo (SP)** và miền Nam có tốc độ giao hàng nhanh vượt trội nhờ tập trung mật độ seller và kho bãi cao.
+* **Tỷ lệ trễ hạn:** Có sự tương quan thuận giữa khoảng cách địa lý và tỷ lệ đơn hàng bị trễ (Late Delivery).
 
 ---
 
 ## 3. Review Score vs Delivery Time
-
 ![Review vs Delivery](notebooks/results/03_review_vs_delivery.png)
 
 ### Key Insights
-- Delivery time có **tương quan nghịch rõ ràng** với review score
-- Đơn giao trong **≤7 ngày**: review score cao nhất
-- Đơn giao **>21 ngày**: review score giảm đáng kể
-- **Implication:** Cải thiện delivery time là đòn bẩy trực tiếp để tăng customer satisfaction
+* **Ngưỡng kiên nhẫn:** Review score giữ mức cao (~4.2+) nếu hàng đến trong **≤7 ngày**.
+* **Điểm rơi hài lòng:** Khi thời gian giao hàng vượt quá **21 ngày**, điểm đánh giá sụt giảm nghiêm trọng xuống dưới 3.0.
+* **Kết luận:** Tốc độ giao hàng là yếu tố tiên quyết ảnh hưởng đến uy tín của sàn và khả năng quay lại của khách hàng.
 
 ---
 
 ## 4. Monthly Revenue Trend
-
 ![Monthly Revenue](notebooks/results/04_monthly_revenue.png)
 
 ### Key Insights
-- Revenue tăng trưởng ổn định từ **2016 đến 2018**
-- Đỉnh điểm vào **tháng 11** — trùng với Black Friday Brazil
-- Sụt giảm đột ngột cuối dataset — do data bị cắt, không phản ánh thực tế kinh doanh
+* **Đà tăng trưởng:** Doanh thu tăng trưởng phi mã từ cuối 2017 đến giữa 2018.
+* **Điểm bùng nổ:** **Tháng 11/2017** ghi nhận doanh thu kỷ lục nhờ sự kiện **Black Friday**.
+* **Lưu ý dữ liệu:** Sự sụt giảm ở tháng cuối cùng là do tập dữ liệu bị cắt ngang (Data Cutoff), không phải do kinh doanh sa sút.
 
 ---
 
 ## 5. Top Product Categories
-
 ![Top Categories](notebooks/results/05_top_categories.png)
 
 ### Key Insights
-- **Health & Beauty**, **Watches & Gifts**, **Bed/Bath/Table** là top 3 về revenue
-- **Health & Beauty** dẫn đầu cả revenue lẫn order count → category chiến lược
-- Một số category có average order value cao dù order count thấp → sản phẩm giá trị cao (Electronics, Furniture)
+* **Ngành hàng chủ lực:** **Health & Beauty** (Sức khỏe & Sắc đẹp) là "con gà đẻ trứng vàng" khi dẫn đầu cả về doanh thu lẫn số lượng đơn hàng.
+* **Giá trị cao:** **Watches & Gifts** có số đơn hàng ít hơn nhưng doanh thu rất lớn, cho thấy AOV của ngành hàng này rất cao.
+* **Thiết yếu:** Các nhóm ngành Home Decor (Bed/Bath/Table) duy trì sức mua ổn định xuyên suốt.
 
 ---
 
-## 6. Customer Purchase Behavior — Repeat vs One-time
-
+## 6. Repeat Purchase Behavior (The Retention Challenge)
 ![Repeat Purchase](notebooks/results/06_repeat_purchase.png)
 
 ### Key Insights
-- **~97% khách hàng chỉ mua đúng 1 lần** và không bao giờ quay lại — đây là vấn đề nghiêm trọng nhất của Olist
-- Số lượng repeat buyers cực kỳ nhỏ, hầu hết chỉ mua 1–2 lần
-- Đây là đặc điểm đã được nhiều nghiên cứu về dataset Olist xác nhận
-
-> **Ghi chú phương pháp:** Ban đầu thực hiện cohort retention analysis nhưng phát hiện ra rằng do tỷ lệ one-time buyers quá cao (~97%), cohort heatmap không có ý nghĩa thống kê (toàn bộ retention rate về 0 sau tháng đầu). Chuyển sang phân tích repeat purchase behavior để truyền tải insight trực tiếp và rõ ràng hơn.
+* **Thực trạng báo động:** **~97% khách hàng chỉ mua 1 lần duy nhất.** Đây là vấn đề cốt lõi của mô hình Olist trong giai đoạn này.
+* **Tỷ lệ quay lại:** Chỉ có khoảng **3%** khách hàng phát sinh đơn hàng thứ 2 trở đi.
+* **Giải thích phương pháp:** Thay vì dùng Cohort Heatmap (vốn sẽ bị trống sau tháng 0), biểu đồ Repeat Purchase phản ánh trực diện sự đứt gãy trong vòng đời khách hàng.
 
 ---
 
-## Tổng kết — Business Recommendations
+## Tổng kết & Kiến nghị chiến lược
 
-### Vấn đề 1: Retention cực thấp ⚠️ Nghiêm trọng nhất
-- ~97% khách hàng chỉ mua 1 lần, không quay lại
-- **Giải pháp:** Loyalty program, personalized email follow-up, subscription model
-
-### Vấn đề 2: Delivery chậm ở vùng xa
-- Các bang phía Bắc có delivery time gấp 2–3 lần so với São Paulo
-- **Giải pháp:** Mở rộng warehouse network, partnership với carrier địa phương
-
-### Vấn đề 3: Review score giảm theo delivery time
-- Mỗi tuần giao hàng thêm → review score giảm rõ rệt
-- **Giải pháp:** SLA rõ ràng theo vùng, thông báo proactive khi có delay
-
-### Cơ hội: Champions segment
-- Nhóm Champions đóng góp revenue không cân xứng với số lượng
-- **Giải pháp:** VIP program, early access, exclusive offers
+1.  **Chiến lược Retention (Ưu tiên số 1):** Triển khai hệ thống CRM và Email Marketing tự động để chăm sóc khách hàng sau mua. Cần tập trung chuyển đổi nhóm "New" thành "Loyal".
+2.  **Tối ưu Logistics vùng xa:** Cân nhắc thiết lập các trạm trung chuyển (Hub) tại khu vực Đông Bắc để giảm thời gian giao hàng và cứu vãn Review Score.
+3.  **Khai thác nhóm Champions:** Tạo chương trình khách hàng thân thiết (Loyalty Program) dành riêng cho nhóm $3\%$ khách hàng quay lại để biến họ thành đại sứ thương hiệu.
 
 ---
-
-*Analysis performed on Olist Brazilian E-Commerce dataset (2016–2018)*
-*Pipeline: PostgreSQL + dbt → Python + matplotlib/seaborn*
-*Source code: `notebooks/customer_analysis.py`*
+*Phân tích thực hiện trên tập dữ liệu Olist Brazilian E-Commerce (2016–2018)*
