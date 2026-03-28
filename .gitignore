@@ -1,0 +1,9 @@
+.env
+Data/                  # dataset quá lớn, người dùng tự download từ Kaggle
+airflow/logs/
+ecommerce_pipeline/logs/
+ecommerce_pipeline/target/
+ecommerce_pipeline/dbt_packages/
+__pycache__/
+*.pyc
+profiles.yml           # chứa password
