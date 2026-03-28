@@ -24,12 +24,9 @@ def get_engine():
     user = os.getenv("POSTGRES_USER")
     password = os.getenv("POSTGRES_PASSWORD")
     db = os.getenv("POSTGRES_DB")
-
-    # Debug: xóa 3 dòng này sau khi chạy thành công
-    logger.info(f"Connecting as user: {user}, db: {db}")
-    assert user is not None, "POSTGRES_USER không đọc được từ .env"
-
-    return create_engine(f"postgresql://{user}:{password}@localhost:5432/{db}")
+    # Nếu chạy trong Docker thì dùng service name, local thì dùng localhost
+    host = os.getenv("POSTGRES_HOST", "localhost")
+    return create_engine(f"postgresql://{user}:{password}@{host}:5432/{db}")
 
 
 def load_csv_to_raw(file_path: Path, table_name: str, engine) -> int:
