@@ -30,36 +30,27 @@ def get_engine():
 
 
 def load_csv_to_raw(file_path: Path, table_name: str, engine) -> int:
-    """
-    Load một file CSV vào schema raw.
-
-    Args:
-        file_path: Đường dẫn đến file CSV
-        table_name: Tên bảng đích trong schema raw
-        engine: SQLAlchemy engine
-
-    Returns:
-        Số rows đã load
-    """
     logger.info(f"Loading {file_path.name} → raw.{table_name}")
 
-    df = pd.read_csv(file_path, dtype=str)  # Load tất cả là string trước
-    # Việc cast type là của staging layer
-
+    df = pd.read_csv(file_path, dtype=str)
     row_count = len(df)
+
+    with engine.begin() as conn:
+        # Truncate thay vì DROP — giữ nguyên bảng và dependencies
+        conn.execute(text(f"TRUNCATE TABLE raw.{table_name}"))
+        logger.info(f"Truncated raw.{table_name}")
 
     df.to_sql(
         name=table_name,
         con=engine,
         schema="raw",
-        if_exists="replace",  # TODO: Sau này đổi thành append + dedup
+        if_exists="append",  # Append vào bảng đã truncate
         index=False,
-        chunksize=10_000  # Tránh OOM với file lớn
+        chunksize=10_000
     )
 
     logger.info(f"Loaded {row_count:,} rows into raw.{table_name}")
     return row_count
-
 
 def main():
     DATA_DIR = Path(__file__).parent.parent / "Data" / "raw"
