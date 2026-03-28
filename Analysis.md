@@ -70,7 +70,7 @@ Tổng hợp insights chiến lược từ phân tích ~100,000 đơn hàng trê
 ### Key Insights
 * **Thực trạng báo động:** **~97% khách hàng chỉ mua 1 lần duy nhất.** Đây là vấn đề cốt lõi của mô hình Olist trong giai đoạn này.
 * **Tỷ lệ quay lại:** Chỉ có khoảng **3%** khách hàng phát sinh đơn hàng thứ 2 trở đi.
-* **Giải thích phương pháp:** Thay vì dùng Cohort Heatmap (vốn sẽ bị trống sau tháng 0), biểu đồ Repeat Purchase phản ánh trực diện sự đứt gãy trong vòng đời khách hàng.
+* **Giải thích phương pháp:** Thay vì dùng Cohort Heatmap (vốn sẽ bị trống sau tháng 12), biểu đồ Repeat Purchase phản ánh trực diện sự đứt gãy trong vòng đời khách hàng.
 
 ---
 
