@@ -79,6 +79,7 @@ Tổng hợp insights chiến lược từ phân tích ~100,000 đơn hàng trê
 1.  **Chiến lược Retention (Ưu tiên số 1):** Triển khai hệ thống CRM và Email Marketing tự động để chăm sóc khách hàng sau mua. Cần tập trung chuyển đổi nhóm "New" thành "Loyal".
 2.  **Tối ưu Logistics vùng xa:** Cân nhắc thiết lập các trạm trung chuyển (Hub) tại khu vực Đông Bắc để giảm thời gian giao hàng và cứu vãn Review Score.
 3.  **Khai thác nhóm Champions:** Tạo chương trình khách hàng thân thiết (Loyalty Program) dành riêng cho nhóm $3\%$ khách hàng quay lại để biến họ thành đại sứ thương hiệu.
-
+4.  **Triển khai phân tích sâu hơn bằng ML:** Thực hiện nâng cấp, đối chiếu và so sánh dữ liệu cầu thiết phục vụ cho phân tích sâu hơn nhằm tìm ra các giải pháp tối ưu hơn cho các mô hình dự báo, tăng tỉ lệ dự báo churn rate lên.
 ---
 *Phân tích thực hiện trên tập dữ liệu Olist Brazilian E-Commerce (2016–2018)*
+
