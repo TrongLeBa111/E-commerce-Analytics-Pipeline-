@@ -4,8 +4,7 @@
 
 Hệ thống xây dựng một **data pipeline end-to-end** trên dataset thương mại điện tử Olist (Brazil), bao gồm 5 tầng chính:
 
-
-![E-commerce Analytics Pipeline](docs/pipeline.png)
+![E-commerce Analytics Pipeline](pipeline.png)
 
 ---
 
