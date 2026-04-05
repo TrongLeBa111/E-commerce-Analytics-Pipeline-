@@ -6,24 +6,12 @@ End-to-end data pipeline xây dựng trên dataset thương mại điện tử *
 
 ## Kiến trúc tổng quan
 
-```
-CSV (Kaggle)                                              ┌──────────────┐
-    │                                                     │  DA Analysis │
-    ▼                                                  ┌─▶│  6 phân tích │
-┌──────────────┐    ┌──────────────┐    ┌────────────┐ │  └──────────────┘
-│  Ingestion   │───▶│  Transform   │───▶│   Marts    │─┤
-│  Python →    │    │  dbt Core    │    │ Star Schema│ │  ┌──────────────┐
-│  PostgreSQL  │    │  staging +   │    │ + Features │ └─▶│  ML Churn    │
-│  raw schema  │    │  marts       │    │            │    │  LightGBM    │
-└──────────────┘    └──────────────┘    └────────────┘    └──────────────┘
-        │                  │                 │
-        └──────────────────┴─────────────────┘
-                 Orchestrated by Airflow
-                 Containerised by Docker
-```
+![E-commerce Analytics Pipeline](docs/pipeline.png)
+
+> **Chi tiết:** CSV (Kaggle) → Ingestion (Python → PostgreSQL raw) → Transform (dbt staging + marts) → Star Schema + ML Features → DA Analysis (6 insights) + ML Churn (LightGBM)  
+> Toàn bộ được orchestrate bởi **Airflow** và containerise bởi **Docker**.
 
 **Xem sơ đồ chi tiết:** [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
-
 ---
 
 ## Stack công nghệ
