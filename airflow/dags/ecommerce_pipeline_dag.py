@@ -34,20 +34,19 @@ with DAG(
     dbt_run = BashOperator(
         task_id='dbt_run',
         bash_command=(
-            'export PATH=$PATH:/home/airflow/.local/bin && '
-            'cd /opt/airflow/ecommerce_pipeline && '
-            'dbt run --profiles-dir /opt/airflow/ecommerce_pipeline'
+            '/home/airflow/.local/bin/dbt run '
+            '--profiles-dir /opt/airflow/ecommerce_pipeline '
+            '--project-dir /opt/airflow/ecommerce_pipeline'
         ),
     )
 
     dbt_test = BashOperator(
         task_id='dbt_test',
         bash_command=(
-            'export PATH=$PATH:/home/airflow/.local/bin && '
-            'cd /opt/airflow/ecommerce_pipeline && '
-            'dbt test --profiles-dir /opt/airflow/ecommerce_pipeline'
+            '/home/airflow/.local/bin/dbt test '
+            '--profiles-dir /opt/airflow/ecommerce_pipeline '
+            '--project-dir /opt/airflow/ecommerce_pipeline'
         ),
     )
-
     # Định nghĩa thứ tự chạy
     ingest >> dbt_run >> dbt_test

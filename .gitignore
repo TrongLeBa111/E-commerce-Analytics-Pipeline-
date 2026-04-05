@@ -1,0 +1,43 @@
+# === Credentials & Secrets ===
+.env
+
+# === Data files (large, không commit) ===
+Data/raw/
+*.csv
+
+# === Python ===
+__pycache__/
+*.py[cod]
+*.pyo
+.Python
+*.egg-info/
+dist/
+build/
+.venv/
+venv/
+env/
+
+# === ML Models ===
+*.pkl
+*.joblib
+
+# === dbt ===
+target/
+dbt_packages/
+ecommerce_pipeline/logs/
+
+# === Logs ===
+logs/
+*.log
+
+# === IDE ===
+.vscode/
+.idea/
+*.iml
+
+# === OS ===
+.DS_Store
+Thumbs.db
+
+# === Jupyter ===
+.ipynb_checkpoints/

@@ -52,13 +52,13 @@ payment_features as (
 review_features as (
     select
         o.customer_id,
-        avg(r.review_score::int)            as avg_review_score,
-        min(r.review_score::int)            as min_review_score,
-        sum(case when r.review_score::int <= 2
+        avg(r.review_score)            as avg_review_score,
+        min(r.review_score)            as min_review_score,
+        sum(case when r.review_score <= 2
             then 1 else 0 end)::float
             / nullif(count(*), 0)           as bad_review_rate
     from {{ ref('fct_orders') }} o
-    join raw.order_reviews r on o.order_id = r.order_id
+    join {{ ref('stg_order_reviews') }} r on o.order_id = r.order_id
     group by o.customer_id
 )
 

@@ -1,36 +1,43 @@
 # E-commerce Analytics Pipeline
 
-End-to-end data pipeline xây dựng trên dataset thương mại điện tử Olist (Brazil), bao gồm ingestion, transformation, data quality testing và orchestration tự động.
+End-to-end data pipeline xây dựng trên dataset thương mại điện tử **Olist (Brazil)**, bao gồm data ingestion, transformation (dbt), data quality testing, orchestration (Airflow), phân tích DA và mô hình ML dự đoán churn.
 
 ---
 
 ## Kiến trúc tổng quan
 
 ```
-CSV (Kaggle)
-    │
-    ▼
-[Airflow DAG — chạy mỗi 6am]
-    │
-    ├── Task 1: ingest_raw_data
-    │       Python + pandas → PostgreSQL schema: raw
-    │
-    ├── Task 2: dbt_run
-    │       staging layer (6 views) + marts layer (4 tables)
-    │
-    └── Task 3: dbt_test
-            16 data quality tests
+CSV (Kaggle)                                              ┌──────────────┐
+    │                                                     │  DA Analysis │
+    ▼                                                  ┌─▶│  6 phân tích │
+┌──────────────┐    ┌──────────────┐    ┌────────────┐ │  └──────────────┘
+│  Ingestion   │───▶│  Transform   │───▶│   Marts    │─┤
+│  Python →    │    │  dbt Core    │    │ Star Schema│ │  ┌──────────────┐
+│  PostgreSQL  │    │  staging +   │    │ + Features │ └─▶│  ML Churn    │
+│  raw schema  │    │  marts       │    │            │    │  LightGBM    │
+└──────────────┘    └──────────────┘    └────────────┘    └──────────────┘
+        │                  │                 │
+        └──────────────────┴─────────────────┘
+                 Orchestrated by Airflow
+                 Containerised by Docker
 ```
 
-**Stack công nghệ:**
+**Xem sơ đồ chi tiết:** [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md)
+
+---
+
+## Stack công nghệ
 
 | Layer | Công nghệ | Phiên bản |
 |---|---|---|
+| Data Source | CSV — Olist Kaggle Dataset | 9 bảng, ~650K rows |
 | Ingestion | Python, pandas, SQLAlchemy | Python 3.12 |
 | Storage | PostgreSQL | 15 |
 | Transform | dbt Core | 1.11 |
 | Orchestration | Apache Airflow | 2.9.0 |
-| Infrastructure | Docker, Docker Compose | - |
+| Infrastructure | Docker, Docker Compose | — |
+| Analysis | pandas, matplotlib, seaborn | — |
+| Machine Learning | LightGBM, scikit-learn, SHAP | — |
 
 ---
 
@@ -38,76 +45,49 @@ CSV (Kaggle)
 
 ```
 E-commerce-Analytics-Pipeline/
-├── docker-compose.yml
-├── init_schemas.sql          # Tạo schema raw, staging, marts
-├── init_airflow_db.sql       # Tạo database airflow
-├── .env                      # Không commit — xem .env.sample
-├── .env.sample
-├── .gitignore
-├── requirements.txt
-├── README.md
 │
-├── Data/
-│   └── raw/                  # CSV gốc từ Kaggle (gitignore)
+├── docker-compose.yml             # Định nghĩa services (PostgreSQL, Airflow)
+├── Dockerfile                     # Custom Airflow image (dbt + psycopg2)
+├── init_schemas.sql               # Tạo schema raw/staging/marts
+├── init_airflow_db.sql            # Tạo database Airflow
+├── .env.sample                    # Mẫu biến môi trường
+├── requirements.txt               # Python dependencies
 │
-├── ingestion/
-│   ├── load_raw.py           # Load CSV → schema raw
-│   └── validate.py           # Kiểm tra data quality
+├── docs/                          # 📄 Tài liệu chi tiết
+│   ├── ARCHITECTURE.md            # Kiến trúc hệ thống + sơ đồ luồng
+│   ├── DATA_MODEL.md              # Star Schema + dbt lineage
+│   ├── ANALYTICS.md               # Kết quả phân tích DA (6 analyses)
+│   └── ML_CHURN.md                # ML Churn Prediction
 │
-├── notebooks/
-│   └── edaData.py            # Exploratory Data Analysis
+├── Data/raw/                      # 9 CSV gốc từ Kaggle
 │
-├── ecommerce_pipeline/       # dbt project
+├── ingestion/                     # ⬇️ Data ingestion
+│   ├── load_raw.py                # Load CSV → PostgreSQL raw schema
+│   └── validate.py                # Kiểm tra data quality
+│
+├── ecommerce_pipeline/            # 🔄 dbt project
 │   ├── dbt_project.yml
-│   ├── macros/
-│   │   └── generate_schema_name.sql
+│   ├── profiles.yml
+│   ├── macros/                    # generate_schema_name, get_ref_date
 │   ├── models/
-│   │   ├── staging/
-│   │   │   ├── sources.yml
-│   │   │   ├── schema.yml
-│   │   │   ├── stg_orders.sql
-│   │   │   ├── stg_order_items.sql
-│   │   │   ├── stg_order_payments.sql
-│   │   │   ├── stg_customers.sql
-│   │   │   ├── stg_products.sql
-│   │   │   └── stg_sellers.sql
-│   │   └── marts/
-│   │       ├── schema.yml
-│   │       ├── fct_orders.sql
-│   │       ├── dim_customers.sql
-│   │       ├── dim_products.sql
-│   │       └── dim_sellers.sql
+│   │   ├── staging/               # 6 views — chuẩn hoá tên, cast type
+│   │   └── marts/                 # 6 tables — star schema + ML features
 │   └── tests/
 │
-└── airflow/
-    └── dags/
-        └── ecommerce_pipeline_dag.py
+├── airflow/dags/                  # ⏰ Airflow DAG
+│   └── ecommerce_pipeline_dag.py  # 3 tasks: ingest → dbt run → dbt test
+│
+├── notebooks/                     # 📊 Phân tích & ML
+│   ├── edaData.py                 # EDA ban đầu
+│   ├── customer_analysis.py       # 6 phân tích DA
+│   ├── Churn_prediction.py        # ML churn prediction + scoring
+│   └── results/                   # Output charts (10 PNG files)
+│
+├── ml/models/                     # 🤖 Trained models
+│   └── churn_model.pkl            # LightGBM churn model
+│
+└── logs/                          # dbt logs
 ```
-
----
-
-## Dataset
-
-**Nguồn:** [Olist Brazilian E-Commerce — Kaggle](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)
-
-9 bảng, ~650,000 rows tổng cộng:
-
-| Bảng | Rows | Granularity |
-|---|---|---|
-| orders | 99,441 | 1 row = 1 đơn hàng |
-| order_items | 112,650 | 1 row = 1 sản phẩm trong 1 đơn |
-| order_payments | 103,886 | 1 row = 1 lần thanh toán |
-| order_reviews | 99,224 | 1 row = 1 đánh giá |
-| customers | 99,441 | 1 row = 1 tài khoản khách hàng |
-| products | 32,951 | 1 row = 1 sản phẩm |
-| sellers | 3,095 | 1 row = 1 seller |
-| geolocation | 1,000,163 | 1 row = 1 tọa độ của 1 zip code |
-| product_category_translation | 71 | 1 row = 1 tên category (PT → EN) |
-
-**Lưu ý quan trọng:**
-- `order_delivered_customer_date` null = đơn chưa giao, không phải data lỗi
-- `order_payments` có thể có nhiều dòng trên 1 đơn — khi tính revenue phải `SUM GROUP BY order_id`
-- `geolocation` không có primary key tự nhiên
 
 ---
 
@@ -127,7 +107,7 @@ pip install -r requirements.txt
 
 ### 2. Tạo file `.env`
 
-Tạo file `.env` ở thư mục gốc — dùng PyCharm hoặc VS Code (tránh PowerShell vì sinh ra UTF-8 BOM):
+Tạo file `.env` ở thư mục gốc (dùng VS Code hoặc PyCharm — tránh PowerShell vì sinh UTF-8 BOM):
 
 ```
 POSTGRES_USER=de_admin
@@ -135,42 +115,23 @@ POSTGRES_PASSWORD=de_password_local
 POSTGRES_DB=ecommerce_db
 ```
 
-> Kiểm tra encoding: mở file `.env` trong PyCharm, góc dưới phải phải hiện `UTF-8` (không phải `UTF-8 BOM`).
-
 ### 3. Download dataset
 
-Tải dataset từ Kaggle và giải nén vào `Data/raw/`. Cần có đủ 9 file CSV.
+Tải [Olist Brazilian E-Commerce](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce) từ Kaggle và giải nén vào `Data/raw/`. Cần có đủ 9 file CSV.
 
-### 4. Khởi động toàn bộ hệ thống
+### 4. Khởi động hệ thống
 
 ```bash
 docker-compose up -d
 ```
 
-Lần đầu mất 3–5 phút (pull Airflow image ~500MB). Kiểm tra:
-
+Lần đầu mất 3–5 phút. Kiểm tra:
 ```bash
 docker-compose ps
 # Mong đợi: postgres (healthy), airflow-webserver (healthy), airflow-scheduler (up)
 ```
 
-### 5. Tạo Airflow admin user (lần đầu)
-
-```bash
-docker exec -it airflow_webserver airflow db migrate
-docker exec -it airflow_webserver airflow users create \
-  --username admin --password admin \
-  --firstname Admin --lastname User \
-  --role Admin --email admin@example.com
-```
-
-### 6. Cài dbt trong Airflow container (lần đầu)
-
-```bash
-docker exec -it --user airflow airflow_scheduler python -m pip install dbt-postgres
-```
-
-### 7. Chạy pipeline
+### 5. Chạy pipeline
 
 Mở Airflow UI tại [http://localhost:8080](http://localhost:8080) (admin/admin):
 - Bật toggle DAG `ecommerce_pipeline`
@@ -178,16 +139,28 @@ Mở Airflow UI tại [http://localhost:8080](http://localhost:8080) (admin/admi
 
 Hoặc chờ schedule tự động chạy lúc 6:00 AM UTC mỗi ngày.
 
-### 8. Verify kết quả
+### 6. Verify kết quả
 
 ```bash
 docker exec -it de_postgres psql -U de_admin -d ecommerce_db -c "\dt marts.*"
 docker exec -it de_postgres psql -U de_admin -d ecommerce_db -c "SELECT COUNT(*) FROM marts.fct_orders;"
 ```
 
+### 7. Chạy phân tích (optional)
+
+```bash
+# DA Analysis — 6 charts
+python notebooks/customer_analysis.py
+
+# ML Churn Prediction — train + score
+python notebooks/Churn_prediction.py
+```
+
 ---
 
-## Data Model — Star Schema
+## Data Model
+
+Hệ thống sử dụng **Star Schema** trong marts layer:
 
 ```
                  dim_date (TODO)
@@ -197,28 +170,14 @@ dim_customers ── fct_orders ── dim_products
                 dim_sellers
 ```
 
-**`fct_orders`** — fact table trung tâm, metrics đã được tính sẵn:
+Mở rộng cho ML:
 
-| Cột | Mô tả |
-|---|---|
-| `item_count` | Số sản phẩm trong đơn |
-| `total_price` | Tổng giá sản phẩm |
-| `total_freight_value` | Tổng phí vận chuyển |
-| `total_order_value` | Tổng giá trị đơn hàng |
-| `delivery_days` | Số ngày giao hàng thực tế |
+```
+fct_orders + dim_customers → mart_customer_features (16 features)
+fct_orders                 → mart_churn_labels      (churn label)
+```
 
----
-
-## Data Quality Tests
-
-16 tests chạy tự động sau mỗi lần transform:
-
-| Test | Models |
-|---|---|
-| `unique` + `not_null` | `order_id` trong `stg_orders`, `fct_orders` |
-| `unique` + `not_null` | `customer_id` trong `stg_customers`, `dim_customers` |
-| `unique` + `not_null` | `product_id` trong `dim_products` |
-| `not_null` | Foreign keys trong `stg_order_items`, `stg_order_payments` |
+**Xem chi tiết:** [docs/DATA_MODEL.md](docs/DATA_MODEL.md)
 
 ---
 
@@ -234,10 +193,36 @@ ingest_raw_data ──→ dbt_run ──→ dbt_test
 
 ---
 
+## Kết quả phân tích
+
+### Data Analysis — 6 phân tích
+| # | Phân tích | Insight chính |
+|---|---|---|
+| 1 | RFM Segmentation | Phần lớn KH dừng ở nhóm New/Potential |
+| 2 | Delivery by State | Vùng Bắc/Đông Bắc giao hàng >20 ngày |
+| 3 | Review vs Delivery | Delivery >21 ngày → review < 3.0 |
+| 4 | Monthly Revenue | Black Friday 11/2017 = đỉnh doanh thu |
+| 5 | Top Categories | Health & Beauty dẫn đầu |
+| 6 | Repeat Purchase | **97% KH chỉ mua 1 lần** |
+
+**Xem chi tiết:** [docs/ANALYTICS.md](docs/ANALYTICS.md)
+
+### Machine Learning — Churn Prediction
+| Chỉ số | Giá trị |
+|---|---|
+| Model | LightGBM (class_weight={0:5, 1:1}) |
+| ROC-AUC | 0.738 |
+| Customers scored | 96,478 |
+| Output | `marts.churn_scores` — risk segment + recommended action |
+
+**Xem chi tiết:** [docs/ML_CHURN.md](docs/ML_CHURN.md)
+
+---
+
 ## Workflow hàng ngày
 
 ```bash
-# Mở máy lên → mở Docker Desktop → chạy:
+# Mở máy → Docker Desktop → chạy:
 docker-compose start
 
 # Xong việc:
@@ -246,31 +231,14 @@ docker-compose stop
 
 ---
 
-## Lessons Learned
+## Tài liệu
 
-**Docker & Networking:**
-- Các container giao tiếp qua tên service (`postgres`), không phải `localhost`
-- Biến môi trường phải khai báo trong `docker-compose.yml`, cần `down` + `up` để apply
-- Dependencies cài bằng pip trong container bị mất khi `docker-compose down -v` → production dùng custom Dockerfile
-
-**dbt:**
-- Schema bị ghép đôi (`staging_staging`) → cần custom macro `generate_schema_name`
-- `profiles.yml` không commit lên Git (chứa password)
-- Xóa example models (`models/example/`) ngay sau khi `dbt init`
-
-**Windows:**
-- File `.env` phải là UTF-8 không BOM — tạo bằng PyCharm/VS Code
-- PowerShell không có `grep`, dùng `Select-String` thay thế
-- Dùng `Path(__file__).parent` thay vì hardcode đường dẫn
-
----
-
-## Tiến độ
-
-- [x] Session 1 — Project setup, Docker, raw ingestion, EDA, validation
-- [x] Session 2 — Data modeling với dbt (staging + marts + 16 tests)
-- [x] Session 3 — Orchestration với Airflow (DAG 3 tasks, schedule daily)
-- [ ] Session 4 — Analytics queries & Metabase visualization
+| Tài liệu | Nội dung |
+|---|---|
+| [docs/ARCHITECTURE.md](docs/ARCHITECTURE.md) | Kiến trúc hệ thống, sơ đồ luồng, stack, cấu trúc thư mục |
+| [docs/DATA_MODEL.md](docs/DATA_MODEL.md) | Star Schema, staging/marts models, dbt lineage, data quality |
+| [docs/ANALYTICS.md](docs/ANALYTICS.md) | 6 phân tích DA + insights chiến lược |
+| [docs/ML_CHURN.md](docs/ML_CHURN.md) | ML churn prediction — model, features, evaluation |
 
 ---
 
@@ -279,3 +247,4 @@ docker-compose stop
 - [dbt Documentation](https://docs.getdbt.com)
 - [Apache Airflow Documentation](https://airflow.apache.org/docs)
 - [Fundamentals of Data Engineering — Reis & Housley](https://www.oreilly.com/library/view/fundamentals-of-data/9781098108298/)
+- [Olist Brazilian E-Commerce Dataset — Kaggle](https://www.kaggle.com/datasets/olistbr/brazilian-ecommerce)

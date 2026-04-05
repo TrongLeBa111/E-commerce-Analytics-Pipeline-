@@ -8,11 +8,6 @@ from dotenv import load_dotenv
 ENV_PATH = Path(__file__).parent.parent / ".env"
 load_dotenv(dotenv_path=ENV_PATH)
 
-# DEBUG: xóa sau khi fix xong
-print(f"ENV_PATH: {ENV_PATH}")
-print(f"File exists: {ENV_PATH.exists()}")
-print(f"Raw content: {ENV_PATH.read_bytes()[:80]}")  # Đọc raw bytes để thấy encoding
-
 logging.basicConfig(
     level=logging.INFO,
     format="%(asctime)s — %(levelname)s — %(message)s"
@@ -36,15 +31,27 @@ def load_csv_to_raw(file_path: Path, table_name: str, engine) -> int:
     row_count = len(df)
 
     with engine.begin() as conn:
-        # Truncate thay vì DROP — giữ nguyên bảng và dependencies
-        conn.execute(text(f"TRUNCATE TABLE raw.{table_name}"))
-        logger.info(f"Truncated raw.{table_name}")
+        # Kiểm tra bảng tồn tại chưa trước khi TRUNCATE
+        exists = conn.execute(text("""
+            SELECT EXISTS (
+                SELECT 1 FROM information_schema.tables 
+                WHERE table_schema = 'raw' AND table_name = :table_name
+            )
+        """), {"table_name": table_name}).scalar()
+
+        if exists:
+            conn.execute(text(f"TRUNCATE TABLE raw.{table_name}"))
+            logger.info(f"Truncated raw.{table_name}")
+            if_exists = "append"
+        else:
+            logger.info(f"Table raw.{table_name} not found — will create")
+            if_exists = "replace"
 
     df.to_sql(
         name=table_name,
         con=engine,
         schema="raw",
-        if_exists="append",  # Append vào bảng đã truncate
+        if_exists=if_exists,
         index=False,
         chunksize=10_000
     )
